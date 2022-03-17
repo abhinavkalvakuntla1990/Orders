@@ -1,0 +1,64 @@
+buildscript {
+    repositories {
+        maven {
+            mavenCentral()
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.3.12.RELEASE"
+        classpath 'io.spring.gradle:dependency-management-plugin:1.0.11.RELEASE'
+        classpath 'net.ltgt.gradle:gradle-apt-plugin:0.21'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.3.12.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+group 'org.egen.ecommerce'
+version '1.0'
+archivesBaseName = 'order'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //  Spring-boot starters
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //  Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor("org.projectlombok:lombok:1.18.12")
+
+    compile 'org.modelmapper:modelmapper:2.4.5'
+
+    //  Database related
+    implementation 'org.postgresql:postgresql:9.4-1206-jdbc42'
+    implementation 'org.flywaydb:flyway-core:6.4.3'
+
+    //openapi
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.4'
+
+    //kafka
+    compile 'org.springframework.kafka:spring-kafka:2.1.0.RELEASE'
+
+
+    //  Testing related
+    testImplementation 'org.testng:testng:6.9.10'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') { exclude group: 'junit', module: 'junit' }
+    testImplementation 'com.h2database:h2:1.4.200'
+}
+
+test {
+    useTestNG {
+        includeGroups 'unit'
+        useDefaultListeners = true
+    }
+}
