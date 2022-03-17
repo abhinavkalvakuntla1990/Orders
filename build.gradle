@@ -46,9 +46,6 @@ dependencies {
     //openapi
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.4'
 
-    //kafka
-    compile 'org.springframework.kafka:spring-kafka:2.1.0.RELEASE'
-
 
     //  Testing related
     testImplementation 'org.testng:testng:6.9.10'
