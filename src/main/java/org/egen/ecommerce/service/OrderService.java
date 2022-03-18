@@ -8,18 +8,19 @@ import org.egen.ecommerce.domain.entities.Order;
 import org.egen.ecommerce.domain.entities.Payment;
 import org.egen.ecommerce.domain.repository.OrderRepository;
 import org.egen.ecommerce.dto.OrderDto;
+import org.egen.ecommerce.dto.UpdateOrderDto;
+import org.egen.ecommerce.enums.ItemStatusEnum;
 import org.egen.ecommerce.enums.OrderStatusEnum;
-import org.egen.ecommerce.web.exception.custom.PreconditionFailedException;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DataRetrievalFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static org.springframework.util.StringUtils.isEmpty;
 
 @Slf4j
 @Service
@@ -40,7 +41,7 @@ public class OrderService {
 
   @Transactional
   public OrderDto createOrder(OrderDto orderDto) {
-    log.debug("Create order for the request {} " + orderDto);
+    log.debug("Create order for the request {} ", orderDto);
     String errorMessage = ERROR_MESSAGE.replace("{}", "create");
 
     validateMandatoryFields(orderDto, errorMessage);
@@ -57,8 +58,7 @@ public class OrderService {
           .payments(orderDto.getPayments().stream().map(paymentDto -> modelMapper.map(paymentDto, Payment.class)).collect(
                 Collectors.toSet()))
           .shippingAddress(orderDto.getShippingAddress() != null ? modelMapper.map(orderDto.getShippingAddress(), Address.class) : null)
-          .items(orderDto.getItems().stream().map(itemDto -> modelMapper.map(itemDto, Item.class)).collect(
-                Collectors.toSet()))
+          .items(mapItems(orderDto))
           .build();
 
     Order orderSaved = orderRepository.save(orderToBeSaved);
@@ -68,25 +68,44 @@ public class OrderService {
 
   }
 
+  private Set<Item> mapItems(OrderDto orderDto) {
+    return orderDto.getItems().stream().map( itemDto -> {
+      itemDto.setStatus(ItemStatusEnum.READY_FOR_DELIVERY);
+      itemDto.setCancelledAt(null);
+      return modelMapper.map(itemDto, Item.class);
+    }).collect(Collectors.toSet());
+  }
 
   @Transactional
-  public OrderDto cancelOrder(String orderId) {
-    log.debug("Cancel order for order Id {} " + orderId);
-    String errorMessage = ERROR_MESSAGE.replace("{}", "cancel");
+  public OrderDto updateStatus(String orderId, UpdateOrderDto orderDto) {
+    log.debug("update order for order Id {} " + orderId);
+    String errorMessage = ERROR_MESSAGE.replace("{}", "update");
 
     Order orderToBeUpdated = orderRepository.findByOrderId(orderId)
           .orElseThrow(() -> new DataRetrievalFailureException("Could not find Order  with order ID: " + orderId));
 
-    validateCancelOrder(orderToBeUpdated.getStatus(), errorMessage);
+    validateUpdateOrder(orderToBeUpdated.getStatus(), errorMessage);
 
-    orderToBeUpdated.setStatus(OrderStatusEnum.CANCELLED);
+    if (orderDto.getStatus().equals(OrderStatusEnum.CANCELLED)) {
+      orderToBeUpdated.setCancelledAt(Instant.now());
+      orderToBeUpdated.setItems(orderToBeUpdated.getItems().stream()
+              .map(item -> {
+                item.setCancelledAt(Instant.now());
+                item.setStatus(ItemStatusEnum.CANCELLED);
+                return item;
+              }).collect(Collectors.toSet()));
+    } else if(orderDto.getStatus().equals(OrderStatusEnum.COMPLETED)) {
+      //TODO we can also set the items to other status depending on the need
+      orderToBeUpdated.setCompletedAt(Instant.now());
+    }
+    orderToBeUpdated.setStatus(orderDto.getStatus());
     Order orderUpdated = orderRepository.save(orderToBeUpdated);
 
     log.info("Canceled order with ID {} for customer with ID: {}", orderUpdated.getOrderId(), orderUpdated.getCustomerId());
     return modelMapper.map(orderUpdated, OrderDto.class);
   }
 
-  private void validateCancelOrder(OrderStatusEnum status, String errorMessage) {
+  private void validateUpdateOrder(OrderStatusEnum status, String errorMessage) {
     if (status.equals(OrderStatusEnum.COMPLETED)) {
       throw new DataIntegrityViolationException("Order has already been completed. " + errorMessage);
     }

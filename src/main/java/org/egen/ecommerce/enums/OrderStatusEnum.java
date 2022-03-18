@@ -2,13 +2,8 @@ package org.egen.ecommerce.enums;
 
 public enum OrderStatusEnum {
 
-ONGOING("Ongoing"),
-CANCELLED("Cancelled"),
-COMPLETED("Completed");
+ONGOING,
+CANCELLED,
+COMPLETED;
 
-private String description;
-
-  OrderStatusEnum(final String description) {
-  this.description = description;
-  }
 }

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.egen.ecommerce.dto.OrderDto;
+import org.egen.ecommerce.dto.UpdateOrderDto;
 import org.egen.ecommerce.service.OrderService;
 import org.egen.ecommerce.web.exception.ErrorInfo;
 import org.springframework.http.HttpStatus;
@@ -48,15 +49,15 @@ public class OrderController {
   }
 
 
-  @Operation(summary = "cancel order status and return updated order", description = "Cancel order status and returns order")
+  @Operation(summary = "updates order status and return updated order", description = "updates order status and returns order")
   @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Returns a newly updated Order", content = @Content(schema = @Schema(implementation = OrderDto.class))),
         @ApiResponse(responseCode = "412",description = "Pre Condition failed", content = @Content(schema = @Schema(implementation = ErrorInfo.class))) })
-  @PatchMapping(value = "/{orderId}/cancel", produces = MediaType.APPLICATION_JSON_VALUE)
+  @PatchMapping(value = "/{orderId}", produces = MediaType.APPLICATION_JSON_VALUE)
   @ResponseStatus(HttpStatus.OK)
   public OrderDto partialUpdate(
-        @PathVariable String orderId) {
-    return orderService.cancelOrder(orderId);
+        @PathVariable String orderId,@RequestBody  @Valid UpdateOrderDto orderDto) {
+    return orderService.updateStatus(orderId, orderDto);
   }
 
 

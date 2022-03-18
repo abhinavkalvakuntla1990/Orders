@@ -2,14 +2,9 @@ package org.egen.ecommerce.enums;
 
 public enum DeliveryMethodEnum {
 
-  IN_STORE_PICK_UP("In Store Pick Up"),
-  CURB_SIDE_DELIVERY("Curb Side Delivery"),
-  SHIP_TO_HOME("Ship To Home"),
-  THIRD_PARTY_DELIVERY("Thrid Party Delivery");
+  IN_STORE_PICK_UP,
+  CURB_SIDE_DELIVERY,
+  SHIP_TO_HOME,
+  THIRD_PARTY_DELIVERY;
 
-  private final String description;
-
-  DeliveryMethodEnum(final String description) {
-  this.description = description;
-  }
 }

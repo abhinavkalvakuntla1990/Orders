@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.egen.ecommerce.enums.ItemStatusEnum;
 
+import java.time.Instant;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -14,4 +16,5 @@ public class ItemDto {
   private String name;
   private Integer quantity;
   private ItemStatusEnum status;
+  private Instant cancelledAt;
 }

@@ -10,6 +10,8 @@ shipping_charges DOUBLE precision NOT NULL,
 total DOUBLE precision NOT NULL,
 shipping_address_id bigint,
 delivery_method VARCHAR  NOT NULL,
+completed_at              timestamp without time zone,
+cancelled_at              timestamp without time zone,
 created_at              timestamp without time zone,
 created_by              VARCHAR,
 modified_at             timestamp without time zone,
@@ -24,6 +26,7 @@ name VARCHAR,
 quantity integer,
 status VARCHAR  NOT NULL,
 order_id bigint,
+cancelled_at              timestamp without time zone,
 CONSTRAINT fk_item_order_order_id FOREIGN KEY (order_id)
         REFERENCES public.orders (id) MATCH SIMPLE
 			
@@ -37,6 +40,7 @@ billing_address_id bigint,
 confirmation_number bigint,
 order_id bigint,
 payment_date timestamp without time zone,
+amount DOUBLE precision NOT NULL,
 CONSTRAINT fk_item_order_order_id FOREIGN KEY (order_id)
         REFERENCES public.orders (id) MATCH SIMPLE
 );

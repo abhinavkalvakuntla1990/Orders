@@ -34,4 +34,7 @@ public class Payment {
   @Column(name = "payment_date")
   private Instant paymentDate;
 
+  @Column(name = "amount", nullable = false)
+  private Double amount;
+
 }

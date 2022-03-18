@@ -5,6 +5,7 @@ import lombok.*;
 import org.egen.ecommerce.enums.ItemStatusEnum;
 
 import javax.persistence.*;
+import java.time.Instant;
 
 @Table(name = "items")
 @Entity
@@ -28,5 +29,7 @@ public class Item {
   @Column(name = "status")
   private ItemStatusEnum status;
 
+  @Column(name="cancelled_at")
+  private Instant cancelledAt;
 
 }

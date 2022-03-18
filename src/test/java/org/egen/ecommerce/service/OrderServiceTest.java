@@ -3,6 +3,7 @@ package org.egen.ecommerce.service;
 import org.egen.ecommerce.domain.entities.Order;
 import org.egen.ecommerce.domain.repository.OrderRepository;
 import org.egen.ecommerce.dto.OrderDto;
+import org.egen.ecommerce.dto.UpdateOrderDto;
 import org.egen.ecommerce.enums.OrderStatusEnum;
 import org.egen.ecommerce.util.OrdersDataProvider;
 import org.mockito.ArgumentCaptor;
@@ -97,7 +98,8 @@ public class OrderServiceTest {
     when(orderRepository.findByOrderId(anyString())).thenReturn(java.util.Optional.ofNullable(orderTobeUpdated));
     when(orderRepository.save(any())).thenAnswer(a -> a.getArguments()[0]);
 
-    OrderDto updatedOrder = orderService.cancelOrder(orderTobeUpdated.getOrderId());
+    OrderDto updatedOrder = orderService.updateStatus(orderTobeUpdated.getOrderId(),
+            new UpdateOrderDto().builder().status(OrderStatusEnum.CANCELLED).build());
 
     assertEquals(updatedOrder.getStatus(), OrderStatusEnum.CANCELLED);
 
@@ -112,7 +114,8 @@ public class OrderServiceTest {
     when(orderRepository.findByOrderId(anyString())).thenReturn(java.util.Optional.ofNullable(orderTobeUpdated));
     when(orderRepository.save(any())).thenAnswer(a -> a.getArguments()[0]);
 
-    OrderDto updatedOrder = orderService.cancelOrder(orderTobeUpdated.getOrderId());
+    OrderDto updatedOrder = orderService.updateStatus(orderTobeUpdated.getOrderId(),
+            new UpdateOrderDto().builder().status(OrderStatusEnum.CANCELLED).build());
 
     assertEquals(updatedOrder.getStatus(), OrderStatusEnum.CANCELLED);
 

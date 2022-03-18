@@ -21,4 +21,6 @@ public class PaymentDto {
   private Long confirmationNumber;
 
   private Instant paymentDate;
+
+  private Double amount;
 }

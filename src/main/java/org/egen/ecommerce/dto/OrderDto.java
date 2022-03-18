@@ -31,4 +31,6 @@ public class OrderDto {
   private Set<PaymentDto> payments;
   private Set<ItemDto> items;
   private DeliveryMethodEnum deliveryMethod;
+  private Instant completedAt;
+  private Instant cancelledAt;
 }
